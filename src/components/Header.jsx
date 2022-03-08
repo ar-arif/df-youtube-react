@@ -45,7 +45,18 @@ export default function Header(props) {
       alert("invalid url!");
     }
   };
-
+  const removeID = (id) => {
+    let index = idList.indexOf(id);
+    if (index > -1) {
+      let temp = [...idList];
+      temp.splice(index, 1);
+      let wantRemove = confirm("are you sure?");
+      if (wantRemove) {
+        setIdList(temp);
+        localStorage.setItem("list", JSON.stringify(temp));
+      }
+    }
+  };
   const addToFavourite = (str) => {
     let id;
     if (checkUrl(str)) {
@@ -127,7 +138,7 @@ export default function Header(props) {
       <Dropdown
         color="gray"
         placement="bottom-start"
-        buttonText=<Icon name="list" size="xxxl" />
+        buttonText={<Icon name="list" size="xxxl" />}
         buttonType="outline"
         size="regular"
         rounded={false}
@@ -135,18 +146,25 @@ export default function Header(props) {
         ripple="dark"
       >
         {idList != null
-          ? idList.map((itm) => (
-              <DropdownItem
-                color="red"
-                ripple="light"
-                onClick={() => {
-                  localStorage.setItem("lastID", itm);
-                  props.setVideoID(itm);
-                }}
-                key={itm}
-              >
-                {itm}
-              </DropdownItem>
+          ? idList.map((itm, i) => (
+              <span className="flex items-center" key={i}>
+                <DropdownItem
+                  color="red"
+                  ripple="light"
+                  onClick={() => {
+                    localStorage.setItem("lastID", itm);
+                    props.setVideoID(itm);
+                  }}
+                >
+                  {itm}
+                </DropdownItem>
+                <Icon
+                  name="close"
+                  size="xxxl"
+                  style={{ color: "black", cursor: "pointer" }}
+                  onClick={() => removeID(itm)}
+                />
+              </span>
             ))
           : ""}
       </Dropdown>
