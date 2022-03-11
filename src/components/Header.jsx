@@ -15,8 +15,9 @@ export default function Header(props) {
     JSON.parse(localStorage.getItem("list"))
   );
   const fetchData = async (id) => {
-    const res = await axios.post("/.netlify/functions/api", { id });
-    console.log(res.data);
+    fetch(`/.netlify/functions/api?id=${id}`)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
   };
   useEffect(() => {
     fetchData("n_KASTN0gUE");
