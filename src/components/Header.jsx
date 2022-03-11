@@ -7,7 +7,6 @@ import {
   Icon,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 export default function Header(props) {
   const [inputText, setInputText] = useState("");
@@ -15,12 +14,12 @@ export default function Header(props) {
     JSON.parse(localStorage.getItem("list"))
   );
   const fetchData = async (id) => {
-    fetch(`/.netlify/functions/api?id=${id}`)
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+    let res = await fetch(`/.netlify/functions/api?id=${id}`);
+    let data = await res.json();
+    return data;
   };
   useEffect(() => {
-    fetchData("n_KASTN0gUE");
+    console.log(fetchData("n_KASTN0gUE"));
   }, [0]);
   function checkUrl(str) {
     let regexp =
