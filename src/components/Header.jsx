@@ -14,14 +14,7 @@ export default function Header(props) {
   const [idList, setIdList] = useState(
     JSON.parse(localStorage.getItem("list"))
   );
-  const fetchData = async (id) => {
-    let res = await fetch(`/.netlify/functions/api?id=${id}`);
-    let data = await res.json();
-    return data.title;
-  };
-  // useEffect(() => {
-  //   console.log(fetchData("n_KASTN0gUE"));
-  // }, []);
+
   function checkUrl(str) {
     let regexp =
       /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
@@ -47,25 +40,20 @@ export default function Header(props) {
         id = str.slice(17);
       }
 
-      props.setVideoID(id);
-      axios.get(`/.netlify/functions/api?id=${id}`).then((res) => {
-        let resData = res.data;
-        let type = "";
-        if (id.includes("list")) {
-          type = "playlist";
-        } else {
-          type = "video";
-        }
-        let data = {
-          inputID: id,
-          type,
-          data: resData,
-        };
-        localStorage.setItem("lastID", JSON.stringify(data));
-      });
-      .catch(err){
-        console.error(err)
-      }
+      axios
+        .get(`/.netlify/functions/api?id=${id}`)
+        .then((res) => {
+          let resData = res.data;
+          let type = id.includes("list") ? "playlist" : "video";
+          let data = {
+            inputID: id,
+            type,
+            data: resData,
+          };
+          localStorage.setItem("lastID", JSON.stringify(data));
+          props.setVideoID(data.inputID);
+        })
+        .catch((err) => console.error(err));
     } else {
       alert("invalid url!");
     }
@@ -102,21 +90,44 @@ export default function Header(props) {
       if (id != "") {
         if (list != null) {
           let temp = JSON.parse(list);
-          if (!temp.includes(id)) {
-            temp.push(id);
-            localStorage.setItem("list", JSON.stringify(temp));
-            alert("Added Successfully!");
-            setIdList(temp);
+          if (!temp.inputID.includes(id)) {
+            axios
+              .get(`/.netlify/functions/api?id=${id}`)
+              .then((res) => {
+                let resData = res.data;
+                let type = id.includes("list") ? "playlist" : "video";
+                let data = {
+                  inputID: id,
+                  type,
+                  data: resData,
+                };
+                temp.push(data);
+                localStorage.setItem("list", JSON.stringify(temp));
+                alert("Added Successfully!");
+                setIdList(temp);
+              })
+              .catch((err) => console.error(err));
           }
         } else {
-          let temp = [id];
-          localStorage.setItem("list", JSON.stringify(temp));
-          alert("Added Successfully!");
-          setIdList(temp);
+          axios
+            .get(`/.netlify/functions/api?id=${id}`)
+            .then((res) => {
+              let resData = res.data;
+              let type = id.includes("list") ? "playlist" : "video";
+              let data = {
+                inputID: id,
+                type,
+                data: resData,
+              };
+              localStorage.setItem("list", JSON.stringify([data]));
+              alert("Added Successfully!");
+              setIdList([data]);
+            })
+            .catch((err) => console.error(err));
         }
+      } else {
+        alert("invalid url!");
       }
-    } else {
-      alert("invalid url!");
     }
   };
 
@@ -171,17 +182,17 @@ export default function Header(props) {
         ripple="dark"
       >
         {idList != null
-          ? idList.map(async (itm, i) => (
+          ? idList.map((itm, i) => (
               <span className="flex items-center" key={i}>
                 <DropdownItem
                   color="red"
                   ripple="light"
                   onClick={() => {
-                    localStorage.setItem("lastID", itm);
-                    props.setVideoID(itm);
+                    localStorage.setItem("lastID", JSON.stringify(itm));
+                    props.setVideoID(itm.inputID);
                   }}
                 >
-                  {await fetchData(itm)}
+                  {itm.data.title}
                 </DropdownItem>
                 <Icon
                   name="close"

@@ -4,11 +4,15 @@ import Body from "./components/Body.jsx";
 import { useState } from "react";
 
 export default function App() {
-  const [videoId, setVideoID] = useState(localStorage.getItem("lastID"));
+  let lastID =
+    JSON.parse(localStorage.getItem("lastID")) != null
+      ? JSON.parse(localStorage.getItem("lastID")).inputID
+      : null;
+  const [videoId, setVideoID] = useState(lastID);
   return (
     <>
       <Header setVideoID={setVideoID} />
-      {videoId != "" ? <Body videoId={videoId} /> : ""}
+      {videoId != "" || videoId != null ? <Body videoId={videoId} /> : ""}
     </>
   );
 }
