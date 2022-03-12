@@ -63,7 +63,7 @@ export default function Header(props) {
         };
         localStorage.setItem("lastID", JSON.stringify(data));
       });
-      catch(err){
+      .catch(err){
         console.error(err)
       }
     } else {
