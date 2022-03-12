@@ -86,28 +86,30 @@ export default function Header(props) {
         id = str.slice(17);
       }
 
-      let list = localStorage.getItem("list");
+      let list = JSON.parse(localStorage.getItem("list"));
       if (id != "") {
-        if (list != null) {
-          let temp = JSON.parse(list);
-          if (!temp.inputID.includes(id)) {
-            axios
-              .get(`/.netlify/functions/api?id=${id}`)
-              .then((res) => {
-                let resData = res.data;
-                let type = id.includes("list") ? "playlist" : "video";
-                let data = {
-                  inputID: id,
-                  type,
-                  data: resData,
-                };
-                temp.push(data);
-                localStorage.setItem("list", JSON.stringify(temp));
-                alert("Added Successfully!");
-                setIdList(temp);
-              })
-              .catch((err) => console.error(err));
-          }
+        if (list != null && list != undefined) {
+          let temp = [...list];
+          temp.forEach((itm) => {
+            if (itm.inputID != id) {
+              axios
+                .get(`/.netlify/functions/api?id=${id}`)
+                .then((res) => {
+                  let resData = res.data;
+                  let type = id.includes("list") ? "playlist" : "video";
+                  let data = {
+                    inputID: id,
+                    type,
+                    data: resData,
+                  };
+                  temp.push(data);
+                  localStorage.setItem("list", JSON.stringify(temp));
+                  alert("Added Successfully!");
+                  setIdList(temp);
+                })
+                .catch((err) => console.error(err));
+            }
+          });
         } else {
           axios
             .get(`/.netlify/functions/api?id=${id}`)
