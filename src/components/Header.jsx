@@ -40,6 +40,7 @@ export default function Header(props) {
         id = str.slice(17);
       }
 
+      props.setVideoID(id);
       axios
         .get(`/.netlify/functions/api?id=${id}`)
         .then((res) => {
@@ -51,7 +52,6 @@ export default function Header(props) {
             data: resData,
           };
           localStorage.setItem("lastID", JSON.stringify(data));
-          props.setVideoID(data.inputID);
         })
         .catch((err) => console.error(err));
     } else {
@@ -88,10 +88,10 @@ export default function Header(props) {
 
       let list = JSON.parse(localStorage.getItem("list"));
       if (id != "") {
-        if (list != null && list != undefined) {
-          let temp = [...list];
-          temp.forEach((itm) => {
-            if (itm.inputID != id) {
+        if (list != null) {
+          let temp = list;
+          for (let i = 0; i < temp.length; i++) {
+            if (temp[i].inputID != id) {
               axios
                 .get(`/.netlify/functions/api?id=${id}`)
                 .then((res) => {
@@ -103,13 +103,13 @@ export default function Header(props) {
                     data: resData,
                   };
                   temp.push(data);
+                  setIdList(temp);
                   localStorage.setItem("list", JSON.stringify(temp));
                   alert("Added Successfully!");
-                  setIdList(temp);
                 })
                 .catch((err) => console.error(err));
             }
-          });
+          }
         } else {
           axios
             .get(`/.netlify/functions/api?id=${id}`)
