@@ -6,7 +6,6 @@ export default function Body({ videoId }) {
   }
   return (
     <div id="body">
-      <div>{randomNumber(10000000000)}</div>
       {videoId != null ? (
         <iframe
           className="video-player"
