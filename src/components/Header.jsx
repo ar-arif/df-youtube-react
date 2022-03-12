@@ -7,7 +7,7 @@ import {
   Icon,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
-// import axios from "axios";
+import axios from "axios";
 
 export default function Header(props) {
   const [inputText, setInputText] = useState("");
@@ -47,9 +47,25 @@ export default function Header(props) {
         id = str.slice(17);
       }
 
-      // console.log(id);
-      localStorage.setItem("lastID", id);
       props.setVideoID(id);
+      axios.get(`/.netlify/functions/api?id=${id}`).then((res) => {
+        let resData = res.data;
+        let type = "";
+        if (id.includes("list")) {
+          type = "playlist";
+        } else {
+          type = "video";
+        }
+        let data = {
+          inputID: id,
+          type,
+          data: resData,
+        };
+        localStorage.setItem("lastID", data);
+      });
+      catch(err){
+        console.error(err)
+      }
     } else {
       alert("invalid url!");
     }
