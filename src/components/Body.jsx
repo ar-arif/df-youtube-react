@@ -1,9 +1,6 @@
 import "./body.css";
 
 export default function Body({ videoId }) {
-  function randomNumber(n) {
-    return parseInt(Math.random() * n);
-  }
   return (
     <div id="body">
       {videoId != null ? (
