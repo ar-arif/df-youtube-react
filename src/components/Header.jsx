@@ -67,37 +67,39 @@ export default function Header(props) {
           block={false}
           ripple="dark"
         >
-          {idList != null
-            ? idList.map((itm, i) => (
-                <span className="flex items-center" key={i}>
-                  <DropdownItem
-                    id="yt-thumbnail-btn"
-                    color="red"
-                    ripple="light"
-                    onClick={() => {
-                      localStorage.setItem("lastID", JSON.stringify(itm));
-                      props.setVideoID(itm.inputID);
-                    }}
-                  >
-                    <img
-                      src={
-                        itm.type == "video"
-                          ? itm.data.thumbnails[0].url
-                          : itm.data.videos[0].thumbnails[0].url
-                      }
-                      className="yt-thumbnail mr-2"
+          <div id="list-scroolbar">
+            {idList != null
+              ? idList.map((itm, i) => (
+                  <span className="flex items-center" key={i}>
+                    <DropdownItem
+                      id="yt-thumbnail-btn"
+                      color="red"
+                      ripple="light"
+                      onClick={() => {
+                        localStorage.setItem("lastID", JSON.stringify(itm));
+                        props.setVideoID(itm.inputID);
+                      }}
+                    >
+                      <img
+                        src={
+                          itm.type == "video"
+                            ? itm.data.thumbnails[0].url
+                            : itm.data.videos[0].thumbnails[0].url
+                        }
+                        className="yt-thumbnail mr-2"
+                      />
+                      <h4>{itm.data.title}</h4>
+                    </DropdownItem>
+                    <Icon
+                      name="close"
+                      size="xxxl"
+                      style={{ color: "black", cursor: "pointer" }}
+                      onClick={() => removeID(itm, idList, setIdList)}
                     />
-                    <h4>{itm.data.title}</h4>
-                  </DropdownItem>
-                  <Icon
-                    name="close"
-                    size="xxxl"
-                    style={{ color: "black", cursor: "pointer" }}
-                    onClick={() => removeID(itm, idList, setIdList)}
-                  />
-                </span>
-              ))
-            : ""}
+                  </span>
+                ))
+              : ""}
+          </div>
         </Dropdown>
       </div>
     </div>
