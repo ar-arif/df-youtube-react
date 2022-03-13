@@ -11,13 +11,21 @@ exports.handler = async function (event) {
 				const playlist = await youtube.getPlaylist(pid);
 				return {
 					statusCode: 200,
-					body: JSON.stringify(playlist),
+					body: JSON.stringify({
+						inputID: id,
+						type: "playlist",
+						data: playlist,
+					}),
 				};
 			} else {
 				const video = await youtube.getVideo(id);
 				return {
 					statusCode: 200,
-					body: JSON.stringify(video),
+					body: JSON.stringify({
+						inputID: id,
+						type: "video",
+						data: video,
+					}),
 				};
 			}
 		}

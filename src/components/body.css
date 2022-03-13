@@ -12,3 +12,12 @@
 	height: 100vh;
 	border: 0;
 }
+
+img.yt-thumbnail {
+	max-width: 6rem;
+}
+
+#yt-thumbnail-btn {
+	display: flex;
+	align-items: center;
+}

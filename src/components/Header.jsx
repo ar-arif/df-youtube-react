@@ -6,135 +6,21 @@ import {
   DropdownLink,
   Icon,
 } from "@material-tailwind/react";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
+import addToFavourite from "./addToFavourite";
+import addVideoPlayer from "./addVideoPlayer";
+import removeID from "./removeID";
 
 export default function Header(props) {
   const [inputText, setInputText] = useState("");
   const [idList, setIdList] = useState(
-    JSON.parse(localStorage.getItem("list"))
+    JSON.parse(localStorage.getItem("list")) != null
+      ? JSON.parse(localStorage.getItem("list"))
+      : []
   );
 
-  function checkUrl(str) {
-    let regexp =
-      /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
-    if (regexp.test(str)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  const addVideoPlayer = (str) => {
-    let id;
-    if (checkUrl(str)) {
-      // check playlist
-      if (str.includes("list=")) {
-        let index = str.indexOf("list=");
-        id = "videoseries?" + str.slice(index);
-      }
-      // check video
-      else if (str.includes("watch?v=")) {
-        let index = str.indexOf("watch?v=") + 8;
-        id = str.slice(index, index + 11);
-      } else {
-        id = str.slice(17);
-      }
-
-      props.setVideoID(id);
-      axios
-        .get(`/.netlify/functions/api?id=${id}`)
-        .then((res) => {
-          let resData = res.data;
-          let type = id.includes("list") ? "playlist" : "video";
-          let data = {
-            inputID: id,
-            type,
-            data: resData,
-          };
-          localStorage.setItem("lastID", JSON.stringify(data));
-        })
-        .catch((err) => console.error(err));
-    } else {
-      alert("invalid url!");
-    }
-  };
-  const removeID = (id) => {
-    let index = idList.indexOf(id);
-    if (index > -1) {
-      let temp = [...idList];
-      temp.splice(index, 1);
-      let wantRemove = confirm("are you sure?");
-      if (wantRemove) {
-        setIdList(temp);
-        localStorage.setItem("list", JSON.stringify(temp));
-      }
-    }
-  };
-  const addToFavourite = (str) => {
-    let id;
-    if (checkUrl(str)) {
-      // check playlist
-      if (str.includes("list=")) {
-        let index = str.indexOf("list=");
-        id = "videoseries?" + str.slice(index);
-      }
-      // check video
-      else if (str.includes("watch?v=")) {
-        let index = str.indexOf("watch?v=") + 8;
-        id = str.slice(index, index + 11);
-      } else {
-        id = str.slice(17);
-      }
-
-      let list = JSON.parse(localStorage.getItem("list"));
-      if (id != "") {
-        if (list != null) {
-          let temp = list;
-          for (let i = 0; i < temp.length; i++) {
-            if (temp[i].inputID != id) {
-              axios
-                .get(`/.netlify/functions/api?id=${id}`)
-                .then((res) => {
-                  let resData = res.data;
-                  let type = id.includes("list") ? "playlist" : "video";
-                  let data = {
-                    inputID: id,
-                    type,
-                    data: resData,
-                  };
-                  temp.push(data);
-                  setIdList(temp);
-                  localStorage.setItem("list", JSON.stringify(temp));
-                  alert("Added Successfully!");
-                })
-                .catch((err) => console.error(err));
-            }
-          }
-        } else {
-          axios
-            .get(`/.netlify/functions/api?id=${id}`)
-            .then((res) => {
-              let resData = res.data;
-              let type = id.includes("list") ? "playlist" : "video";
-              let data = {
-                inputID: id,
-                type,
-                data: resData,
-              };
-              localStorage.setItem("list", JSON.stringify([data]));
-              alert("Added Successfully!");
-              setIdList([data]);
-            })
-            .catch((err) => console.error(err));
-        }
-      } else {
-        alert("invalid url!");
-      }
-    }
-  };
-
   return (
-    <div id="header" className="flex m-5">
+    <div id="header" className="m-5 md:flex">
       <Input
         className=""
         type="text"
@@ -146,66 +32,74 @@ export default function Header(props) {
         onChange={(e) => setInputText(e.target.value)}
         value={inputText}
       />
-
-      <Button
-        className="ml-2"
-        color="red"
-        buttonType="filled"
-        size="regular"
-        // rounded={true}
-        block={false}
-        iconOnly={false}
-        ripple="light"
-        onClick={() => addVideoPlayer(inputText)}
-      >
-        <Icon name="monitor" size="xxxl" />
-      </Button>
-      <Button
-        className="mx-2"
-        color="red"
-        buttonType="outline"
-        size="regular"
-        // rounded={true}
-        block={false}
-        iconOnly={false}
-        ripple="light"
-        onClick={() => addToFavourite(inputText)}
-      >
-        <Icon name="favorite" size="xxxl" />
-      </Button>
-      <Dropdown
-        color="gray"
-        placement="bottom-start"
-        buttonText={<Icon name="list" size="xxxl" />}
-        buttonType="outline"
-        size="regular"
-        rounded={false}
-        block={false}
-        ripple="dark"
-      >
-        {idList != null
-          ? idList.map((itm, i) => (
-              <span className="flex items-center" key={i}>
-                <DropdownItem
-                  color="red"
-                  ripple="light"
-                  onClick={() => {
-                    localStorage.setItem("lastID", JSON.stringify(itm));
-                    props.setVideoID(itm.inputID);
-                  }}
-                >
-                  {itm.data.title}
-                </DropdownItem>
-                <Icon
-                  name="close"
-                  size="xxxl"
-                  style={{ color: "black", cursor: "pointer" }}
-                  onClick={() => removeID(itm)}
-                />
-              </span>
-            ))
-          : ""}
-      </Dropdown>
+      <div className="flex justify-center mt-2 md:mt-0">
+        <Button
+          className="md:ml-2"
+          color="red"
+          buttonType="filled"
+          size="regular"
+          block={false}
+          iconOnly={false}
+          ripple="light"
+          onClick={() => addVideoPlayer(inputText, props)}
+        >
+          <Icon name="monitor" size="xxxl" />
+        </Button>
+        <Button
+          className="mx-2 "
+          color="red"
+          buttonType="outline"
+          size="regular"
+          block={false}
+          iconOnly={false}
+          ripple="light"
+          onClick={() => addToFavourite(inputText, idList, setIdList)}
+        >
+          <Icon name="favorite" size="xxxl" />
+        </Button>
+        <Dropdown
+          color="gray "
+          placement="bottom-start"
+          buttonText={<Icon name="list" size="xxxl" />}
+          buttonType="outline"
+          size="regular"
+          rounded={false}
+          block={false}
+          ripple="dark"
+        >
+          {idList != null
+            ? idList.map((itm, i) => (
+                <span className="flex items-center" key={i}>
+                  <DropdownItem
+                    id="yt-thumbnail-btn"
+                    color="red"
+                    ripple="light"
+                    onClick={() => {
+                      localStorage.setItem("lastID", JSON.stringify(itm));
+                      props.setVideoID(itm.inputID);
+                    }}
+                  >
+                    <img
+                      src={
+                        itm.type == "video"
+                          ? itm.data.thumbnails[0].url
+                          : itm.data.videos[0].thumbnails[0].url
+                      }
+                      className="yt-thumbnail mr-2"
+                    />
+                    <h4>{itm.data.title}</h4>
+                  </DropdownItem>
+                  <Icon
+                    name="close"
+                    size="xxxl"
+                    style={{ color: "black", cursor: "pointer" }}
+                    onClick={() => removeID(itm, idList, setIdList)}
+                  />
+                </span>
+              ))
+            : ""}
+        </Dropdown>
+      </div>
     </div>
   );
 }
