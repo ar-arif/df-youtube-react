@@ -20,3 +20,8 @@ body {
   background-color: #121212;
   color: white;
 }
+
+#list-scroolbar {
+  max-height: 22rem;
+  overflow: auto;
+}
