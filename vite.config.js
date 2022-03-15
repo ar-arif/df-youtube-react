@@ -15,8 +15,10 @@ export default defineConfig({
       includeAssets: ["favicon.svg"],
       manifest: {
         name: "DF YouTube",
-        short_name: "shortName",
+        short_name: "DF YouTube",
+        description: "DF Tube (Distraction Free for YouTube)",
         theme_color: "#f44336",
+        background_color: "#121212",
         icons: [
           {
             src: "pwa-192x192.png", // <== don't add slash, for testing
