@@ -7,7 +7,7 @@ import GithubCorner from "react-github-corner";
 export default function App() {
   let lastID =
     JSON.parse(localStorage.getItem("lastID")) != null
-      ? JSON.parse(localStorage.getItem("lastID")).inputID
+      ? JSON.parse(localStorage.getItem("lastID"))
       : null;
   const [videoId, setVideoID] = useState(lastID);
   return (
@@ -21,7 +21,7 @@ export default function App() {
         size="40"
       />
       <Header setVideoID={setVideoID} />
-      {videoId != "" || videoId != null ? <Body videoId={videoId} /> : ""}
+      {videoId != "" || videoId != null ? <Body data={videoId} /> : ""}
     </>
   );
 }

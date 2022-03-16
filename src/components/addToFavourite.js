@@ -3,10 +3,12 @@ import axios from "axios";
 import getSliceId from "./getSliceId";
 
 export default async function addToFavourite(str, idList, setIdList) {
+	const server_base =
+		import.meta.env.MODE == "production" ? "/" : "http://localhost:8000/";
 	if (isUrl(str)) {
 		const id = getSliceId(str);
 		try {
-			const res = await axios.get(`/api/youtube?id=${id}`);
+			const res = await axios.get(`${server_base}api/youtube?id=${id}`);
 			const data = res.data;
 			const allInputIds = idList.map((itm) => itm.inputID);
 			if (idList == null || idList.length == 0) {

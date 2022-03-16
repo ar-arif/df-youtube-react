@@ -14,7 +14,9 @@ exports.handler = async function (event) {
 					body: JSON.stringify({
 						inputID: id,
 						type: "playlist",
-						data: playlist,
+						id: playlist.id,
+						title: playlist.title,
+						thumbnail: playlist.videos[0].thumbnails[3].url,
 					}),
 				};
 			} else {
@@ -24,7 +26,9 @@ exports.handler = async function (event) {
 					body: JSON.stringify({
 						inputID: id,
 						type: "video",
-						data: video,
+						id: video.id,
+						title: video.title,
+						thumbnail: video.thumbnails[3].url,
 					}),
 				};
 			}

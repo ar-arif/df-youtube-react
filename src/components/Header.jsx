@@ -77,18 +77,11 @@ export default function Header(props) {
                       ripple="light"
                       onClick={() => {
                         localStorage.setItem("lastID", JSON.stringify(itm));
-                        props.setVideoID(itm.inputID);
+                        props.setVideoID(itm);
                       }}
                     >
-                      <img
-                        src={
-                          itm.type == "video"
-                            ? itm.data.thumbnails[0].url
-                            : itm.data.videos[0].thumbnails[0].url
-                        }
-                        className="yt-thumbnail mr-2"
-                      />
-                      <h4>{itm.data.title}</h4>
+                      <img src={itm.thumbnail} className="yt-thumbnail mr-2" />
+                      <h4>{itm.title}</h4>
                     </DropdownItem>
                     <Icon
                       name="close"
