@@ -41,5 +41,7 @@ app.get("/api/youtube", async (req, res) => {
 });
 
 app.listen(port, () => {
-	console.log(`Dev-Server listening on port http://localhost:${port}`);
+	console.log(
+		`Express-Server listening  ==> \x1b[36m http://localhost:${port}/ \x1b[0m`
+	);
 });
