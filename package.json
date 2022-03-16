@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "concurrently": "concurrently --names \"SERVER,CLIENT\" -c \"bgBlack,bgBlue\" \"cd dev-server && yarn dev\" \"yarn dev\""
+    "dev": "concurrently --names \"SERVER,CLIENT\" -c \"bgBlack,bgBlue\" \"cd dev-server && yarn dev\" \"yarn start\""
   },
   "dependencies": {
     "@material-tailwind/react": "0.3.4",

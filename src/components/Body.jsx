@@ -21,7 +21,7 @@ export default function Body({ data }) {
       {data != null && data != undefined ? (
         <iframe
           className="video-player"
-          src={"https://www.youtube.com/embed/" + data.inputID + opts}
+          src={"https://www.youtube-nocookie.com/embed/" + data.inputID + opts}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         ></iframe>
