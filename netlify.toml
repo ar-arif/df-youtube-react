@@ -1,0 +1,17 @@
+[build]
+    command = "yarn build"
+	functions = "functions"
+	publish = "dist"
+
+[dev]
+    #command = 'yarn build'
+    #functions = "lambda"
+    functionsPort = 5000
+    #port = 8000
+    #publish = 'dist'
+    #targetPort = 8888
+
+[[redirects]]
+    from = "/api/*"
+    to = "/.netlify/functions/:splat"
+    status = 200
